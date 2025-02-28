@@ -12,7 +12,26 @@ export const DEFAULT_ALCHEMY_API_KEY = "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
 
 const scaffoldConfig = {
   // The networks on which your DApp is live
-  targetNetworks: [chains.hardhat],
+  targetNetworks: [
+    {
+      id: 20200,
+      name: "BCOS Testnet",
+      nativeCurrency: {
+        decimals: 18,
+        name: "BCOS Token",
+        symbol: "UBT",
+      },
+      rpcUrls: {
+        default: { http: ["https://rpc.eightart.hk"] },
+      },
+      // blockExplorers: {
+      //   default: {
+      //     name: "Eightart Explorer",
+      //     url: "https://blockscout.eight-art.com/",
+      //   },
+      // },
+    },
+  ],
 
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect if you only target the local network (default is 4000)

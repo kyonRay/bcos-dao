@@ -52,6 +52,8 @@ contract BCOSGovernor is
         _;
     }
 
+    mapping(uint256 proposalHash => uint256 proposalId) private _proposalIds;
+    uint256 private _latestProposalId;
     mapping(uint256 proposalId => ProposalVote) private _proposalVotes;
     mapping(uint256 proposalId => ProposalApprovalFlow) private _proposalApprovalFlow;
 
@@ -70,6 +72,27 @@ contract BCOSGovernor is
             interfaceId == type(IAccessControl).interfaceId ||
             interfaceId == type(IGovernor).interfaceId ||
             super.supportsInterface(interfaceId);
+    }
+
+    function getProposalId(
+        address[] memory targets,
+        uint256[] memory values,
+        bytes[] memory calldatas,
+        bytes32 descriptionHash
+    ) public view virtual override returns (uint256) {
+        uint256 proposalHash = hashProposal(targets, values, calldatas, descriptionHash);
+        uint256 storedProposalId = _proposalIds[proposalHash];
+        if (storedProposalId == 0) {
+            revert GovernorNonexistentProposal(0);
+        }
+        return storedProposalId;
+    }
+
+    /**
+ * @dev Returns the latest proposal id. A return value of 0 means no proposals have been created yet.
+     */
+    function latestProposalId() public view virtual returns (uint256) {
+        return _latestProposalId;
     }
 
     /**
@@ -180,6 +203,11 @@ contract BCOSGovernor is
         string memory description,
         address proposer
     ) internal override(Governor, GovernorStorage) returns (uint256) {
+        uint256 proposalHash = hashProposal(targets, values, calldatas, keccak256(bytes(description)));
+        uint256 storedProposalId = _proposalIds[proposalHash];
+        if (storedProposalId == 0) {
+            _proposalIds[proposalHash] = ++_latestProposalId;
+        }
         return super._propose(targets, values, calldatas, description, proposer);
     }
 

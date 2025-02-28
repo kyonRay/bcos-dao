@@ -22,11 +22,6 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/",
   },
   {
-    label: "RANDAO",
-    href: "/randao",
-    icon: <CalculatorIcon className="h-4 w-4" />,
-  },
-  {
     label: "Debug Contracts",
     href: "/debug",
     icon: <BugAntIcon className="h-4 w-4" />,
@@ -103,8 +98,8 @@ export const Header = () => {
             <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.svg" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold leading-tight">Scaffold-ETH</span>
-            <span className="text-xs">Ethereum dev stack</span>
+            <span className="font-bold leading-tight">BCOS Chain DAO</span>
+            {/*<span className="text-xs">Ethereum dev stack</span>*/}
           </div>
         </Link>
         <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">

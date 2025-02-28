@@ -1,67 +1,115 @@
 "use client";
 
-import Link from "next/link";
+import React from "react";
+import { Button } from "antd";
 import type { NextPage } from "next";
-import { useAccount } from "wagmi";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Address } from "~~/components/scaffold-eth";
+import { ProposalCard } from "~~/components/ProposalCard";
+import Link from "next/link";
+
+type ProposalStatus = {
+  key: number;
+  label: string;
+  color: string;
+  icon?: React.ReactNode;
+};
+
+const proposalStatuses: ProposalStatus[] = [
+  {
+    key: 0,
+    label: "All Proposals",
+    color: "bg-blue-400",
+  },
+  {
+    key: 1,
+    label: "Active",
+    color: "bg-green-400",
+  },
+  {
+    key: 2,
+    label: "Closed",
+    color: "bg-red-400",
+  },
+  {
+    key: 3,
+    label: "Pending",
+    color: "bg-yellow-400",
+  },
+];
 
 const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
-
+  const proposalFilterKey = 0;
   return (
     <>
-      <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
-          </h1>
-          <div className="flex justify-center items-center space-x-2 flex-col sm:flex-row">
-            <p className="my-2 font-medium">Connected Address:</p>
-            <Address address={connectedAddress} />
+      <div className="container mx-auto px-4 py-6">
+        {/*Stats Section*/}
+        <div className="grid grid-cols-4 gap-6 mb-6">
+          <div id="userStats" className="contents">
+            <div className="bg-white rounded-xl p-6 shadow-lg">
+              <h3 className="text-gray-600 text-sm">Active Proposals</h3>
+              <p className="text-2xl font-bold text-blue-900 mt-2">12</p>
+              <p className="text-green-600 text-sm mt-1">+2 this week</p>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-lg">
+              <h3 className="text-gray-600 text-sm">Total Votes</h3>
+              <p className="text-2xl font-bold text-blue-900 mt-2">1,458</p>
+              <p className="text-green-600 text-sm mt-1">+126 this week</p>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-lg">
+              <h3 className="text-gray-600 text-sm">Participation Rate</h3>
+              <p className="text-2xl font-bold text-blue-900 mt-2">76.5%</p>
+              <p className="text-green-600 text-sm mt-1">+5.2% this month</p>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-lg">
+              <h3 className="text-gray-600 text-sm">Executed Proposals</h3>
+              <p className="text-2xl font-bold text-blue-900 mt-2">89</p>
+              <p className="text-green-600 text-sm mt-1">+3 this week</p>
+            </div>
           </div>
-
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/app/page.tsx
-            </code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              YourContract.sol
-            </code>{" "}
-            in{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/hardhat/contracts
-            </code>
-          </p>
         </div>
 
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contracts
-                </Link>{" "}
-                tab.
-              </p>
+        {/*Proposal Section*/}
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-800">Proposals</h2>
+            <Link
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition duration-300"
+              href="/proposal/creation"
+            >
+              Create Proposal
+            </Link>
+          </div>
+          {/*Filter Tabs*/}
+          <div className="flex space-x-4 mb-6">
+            {proposalStatuses.map(status => {
+              const isActive = status.key === proposalFilterKey;
+              return (
+                <Button
+                  key={status.key}
+                  color="default"
+                  variant="filled"
+                  className={`${
+                    isActive ? "bg-secondary shadow-md" : ""
+                  } font-medium text-neutral hover:bg-secondary hover:shadow-md focus:!bg-secondary active:!text-neutral py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col`}
+                  icon={status.icon}
+                >
+                  {status.label}
+                </Button>
+              );
+            })}
+          </div>
+
+          <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <ProposalCard></ProposalCard>
+              <ProposalCard></ProposalCard>
+              <ProposalCard></ProposalCard>
             </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <button className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition duration-300">
+              Load More Proposals
+            </button>
           </div>
         </div>
       </div>
