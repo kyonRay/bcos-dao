@@ -20,6 +20,7 @@ import {
   useExecuteProposal,
   useHasVoted,
   useIsMaintainer,
+  usePastQuorumNumerator,
   useProposalAllInfo,
   useProposalVoterInfo,
   useProposalVoters,
@@ -59,7 +60,8 @@ const ProposalDetail: NextPage = () => {
   const { voters, refetchVoters } = useProposalVoters(Number(id));
   const castVote = useCastVote(Number(id), voteOption != null ? voteOption : VoteType.Abstain, voteReason);
   const voteSuccessThreshold = useVoteSuccessThreshold();
-  const quorumNumerator = useQuorumNumerator();
+  // const quorumNumerator = useQuorumNumerator();
+  const quorumNumerator = usePastQuorumNumerator(proposal?.startTime || 0);
   const { targetNetwork } = useTargetNetwork();
   const blockExplorerBaseURL = targetNetwork.blockExplorers?.default?.url;
   const bcosGovernor = useDeployedContractInfo({

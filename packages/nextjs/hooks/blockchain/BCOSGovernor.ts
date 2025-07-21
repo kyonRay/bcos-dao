@@ -398,6 +398,21 @@ export const useQuorumNumerator = () => {
   return Number(quorumNumerator);
 };
 
+export const usePastQuorumNumerator = (timestamp: number) => {
+  const { data: pastQuorumNumerator } = useScaffoldReadContract({
+    contractName: "BCOSGovernor",
+    functionName: "quorumNumerator",
+    args: [BigInt(timestamp)] as never,
+  });
+
+  if (pastQuorumNumerator === undefined) {
+    return 0;
+    // throw new Error("Invalid past quorum numerators data");
+  }
+  console.log("usePastQuorumNumerator useScaffoldReadContract: ", pastQuorumNumerator);
+  return Number(pastQuorumNumerator);
+};
+
 export const useVotingPeriod = () => {
   const { data: proposalDuration } = useScaffoldReadContract({
     contractName: "BCOSGovernor",
