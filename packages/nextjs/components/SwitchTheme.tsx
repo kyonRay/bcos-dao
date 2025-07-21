@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { MoonOutlined, SunOutlined } from "@ant-design/icons";
+import { Button } from "antd";
 import { useTheme } from "next-themes";
-import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 
 export const SwitchTheme = ({ className }: { className?: string }) => {
-  const { setTheme, resolvedTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   const isDarkMode = resolvedTheme === "dark";
@@ -26,17 +27,26 @@ export const SwitchTheme = ({ className }: { className?: string }) => {
 
   return (
     <div className={`flex space-x-2 h-8 items-center justify-center text-sm ${className}`}>
-      <input
-        id="theme-toggle"
-        type="checkbox"
-        className="toggle toggle-primary bg-primary hover:bg-primary border-primary"
-        onChange={handleToggle}
-        checked={isDarkMode}
+      {/*<input*/}
+      {/*  id="theme-toggle"*/}
+      {/*  type="checkbox"*/}
+      {/*  className="toggle toggle-primary bg-primary hover:bg-primary border-primary"*/}
+      {/*  onChange={handleToggle}*/}
+      {/*  checked={isDarkMode}*/}
+      {/*/>*/}
+      <Button
+        type="text"
+        className="flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+        onClick={handleToggle}
+        size="large"
+        icon={
+          theme === "dark" ? (
+            <SunOutlined className="text-gray-500 dark:text-gray-400" />
+          ) : (
+            <MoonOutlined className="text-gray-500 dark:text-gray-400" />
+          )
+        }
       />
-      <label htmlFor="theme-toggle" className={`swap swap-rotate ${!isDarkMode ? "swap-active" : ""}`}>
-        <SunIcon className="swap-on h-5 w-5" />
-        <MoonIcon className="swap-off h-5 w-5" />
-      </label>
     </div>
   );
 };

@@ -191,14 +191,26 @@ const ProposalCreation: NextPage = () => {
 
   return (
     <main className="container mx-auto w-full px-4 py-6">
-      <FloatButton tooltip={<div>DAO Parameters</div>} onClick={() => console.log("click")}></FloatButton>
+      {/*<FloatButton tooltip={<div>DAO Parameters</div>} onClick={() => console.log("click")}></FloatButton>*/}
       <Spin spinning={submitting} fullscreen size={"large"}></Spin>
       <div className="flex justify-between">
         <div className="inline-grid grid-cols-2 gap-4">
-          <Button icon={<EditFilled />} size="large" className="bg-primary text-primary-content" variant="filled">
+          <Button
+            disabled
+            icon={<EditFilled />}
+            size="large"
+            className="bg-primary text-primary-content"
+            variant="filled"
+          >
             Edit
           </Button>
-          <Button icon={<CaretRightFilled />} size="large" className="bg-primary text-primary-content" variant="filled">
+          <Button
+            disabled
+            icon={<CaretRightFilled />}
+            size="large"
+            className="bg-primary text-primary-content"
+            variant="filled"
+          >
             Preview
           </Button>
         </div>

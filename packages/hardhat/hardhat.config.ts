@@ -57,6 +57,7 @@ const config: HardhatUserConfig = {
       accounts: [deployerPrivateKey],
     },
     potos_testnet: {
+      allowUnlimitedContractSize: true,
       url: `https://rpc-testnet.potos.hk`,
       chainId: 60600,
       accounts: [deployerPrivateKey],

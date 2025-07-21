@@ -364,13 +364,7 @@ UUPSUpgradeable
         BCOSGovernorStorage storage $ = _getBCOSGovernorStorage();
         uint256 proposalHash = $._proposalHashes[proposalId];
         ProposalState proposalState = state(proposalHash);
-        if (proposalState != ProposalState.Active) {
-            revert GovernorUnexpectedProposalState(
-                proposalHash,
-                proposalState,
-                _encodeStateBitmap(ProposalState.Active)
-            );
-        }
+        _validateStateBitmap(proposalHash, _encodeStateBitmap(ProposalState.Active) | _encodeStateBitmap(ProposalState.Queued));
         (
             address[] memory targets,
             uint256[] memory values,
@@ -441,9 +435,9 @@ UUPSUpgradeable
      * timer functions
      ****************************/
 
-    function resetUint(uint256 _unit) public onlyMaintainer {
+    function resetUint(uint256 _unit) public onlyGovernance {
         uint256 finalStateProposal = getExecutedProposals().length + getCancelledProposals().length;
-        require(finalStateProposal == proposalCount(), "BCOSGovernor: not all proposals are finalized");
+        require(finalStateProposal + 1 == proposalCount(), "BCOSGovernor: not all proposals are finalized");
         ERC20VotePower token = ERC20VotePower(address(token()));
         TimeSetting t = token.timer();
         t.resetUnit(_unit);

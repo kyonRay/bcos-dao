@@ -87,6 +87,16 @@ const governorSettings = [
       },
     ],
   },
+  {
+    label: <div className="text-base-content">Timer Unit Changing</div>,
+    title: "Timer Unit Changing",
+    options: [
+      {
+        label: <div>Reset Timer Unit</div>,
+        value: "resetUint",
+      },
+    ],
+  },
 ];
 
 const GovernorSettingsForm = ({ field, index, onChange }: { field?: any; index?: any; onChange: any }) => {
