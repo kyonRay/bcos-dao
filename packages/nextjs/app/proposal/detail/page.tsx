@@ -20,6 +20,7 @@ import {
   useExecuteProposal,
   useHasVoted,
   useIsMaintainer,
+  usePastQuorumNumerator,
   useProposalAllInfo,
   useProposalVoterInfo,
   useProposalVoters,
@@ -31,7 +32,7 @@ import { usePastVotePower, useTotalSupply } from "~~/hooks/blockchain/ERC20VoteP
 import { useTransactionsByAddress } from "~~/hooks/blockchain/useTransactionByAddress";
 import { useDeployedContractInfo, useTargetNetwork } from "~~/hooks/scaffold-eth";
 import { ProposalState, VoteType, voteTypeToString } from "~~/services/store/store";
-import { formatDuration, formatUTCDate } from "~~/utils/TimeFormatter";
+import { formatUTCDate } from "~~/utils/TimeFormatter";
 import { formatToken } from "~~/utils/TokenFormatter";
 import { shortenAddress } from "~~/utils/scaffold-eth/common";
 
@@ -59,7 +60,8 @@ const ProposalDetail: NextPage = () => {
   const { voters, refetchVoters } = useProposalVoters(Number(id));
   const castVote = useCastVote(Number(id), voteOption != null ? voteOption : VoteType.Abstain, voteReason);
   const voteSuccessThreshold = useVoteSuccessThreshold();
-  const quorumNumerator = useQuorumNumerator();
+  // const quorumNumerator = useQuorumNumerator();
+  const quorumNumerator = usePastQuorumNumerator(proposal?.startTime || 0);
   const { targetNetwork } = useTargetNetwork();
   const blockExplorerBaseURL = targetNetwork.blockExplorers?.default?.url;
   const bcosGovernor = useDeployedContractInfo({
@@ -246,6 +248,12 @@ const ProposalDetail: NextPage = () => {
         <div className="bg-base-200 rounded-xl shadow-lg p-6 mb-8">
           <h2 className="text-xl font-bold text-base-content mb-6">Proposal Actions</h2>
           <div className="space-y-4">
+            <button
+              onClick={handleEmergencyShutdown}
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg transition duration-300"
+            >
+              Emergency Shutdown
+            </button>
             <button
               onClick={handleExecute}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-300"
@@ -578,14 +586,14 @@ const ProposalDetail: NextPage = () => {
                 </div>
                 <div className="grid grid-cols-3 gap-4 mt-4">
                   <div className="flex rounded-3xl items-center p-4 text-base font-semibold  text-blue-400 bg-gray-200 justify-between">
-                    <div>Yes</div>
+                    <div>For</div>
                     <div>
                       {formatToken(proposal.forVotes).toFixed(4)} (
                       {getPercentage(forVotesBigInt, totalVotesBigInt).toFixed(2)}%)
                     </div>
                   </div>
                   <div className="flex rounded-3xl items-center p-4 text-base font-semibold  text-red-400 bg-gray-200 justify-between">
-                    <div>No</div>
+                    <div>Against</div>
                     <div>
                       {formatToken(proposal.againstVotes).toFixed(4)} (
                       {getPercentage(againstVotesBigInt, totalVotesBigInt).toFixed(2)}%)

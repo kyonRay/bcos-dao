@@ -18,7 +18,7 @@ type ABIFunctionFormProps = {
   inheritedFrom?: string;
 };
 
-export const ABIFunctionForm = ({ abi, abiFunction, onChange, inheritedFrom }: ABIFunctionFormProps) => {
+export const ABIFunctionForm = ({ abi, abiFunction, onChange }: ABIFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() => getInitialFormState(abiFunction));
 
   // const handleWrite = async () => {

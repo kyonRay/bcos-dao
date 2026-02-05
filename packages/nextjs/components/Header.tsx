@@ -9,7 +9,8 @@ import { Input, Modal, message } from "antd";
 import dotenv from "dotenv";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
-import { ArrowPathIcon, Bars3Icon, BookOpenIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, Bars3Icon, BookOpenIcon, BugAntIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { SwitchTheme } from "~~/components/SwitchTheme";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useIsMaintainer } from "~~/hooks/blockchain/BCOSGovernor";
 import { useBalanceOf, useDelegate, useDelegates, useSymbol, useVotePower } from "~~/hooks/blockchain/ERC20VotePower";
@@ -19,6 +20,7 @@ import { shortenAddress } from "~~/utils/scaffold-eth/common";
 dotenv.config();
 
 type HeaderMenuLink = {
+  debugOnly?: boolean; // For debugging purposes, not used in production
   label: string;
   href: string;
   icon?: React.ReactNode;
@@ -37,11 +39,12 @@ export const menuLinks: HeaderMenuLink[] = [
     icon: <BookOpenIcon className="h-4 w-4" />,
     target: "_blank",
   },
-  // {
-  //   label: "Debug Contracts",
-  //   href: "/debug",
-  //   icon: <BugAntIcon className="h-4 w-4" />,
-  // },
+  {
+    label: "Debug",
+    href: "/debug",
+    icon: <BugAntIcon className="h-4 w-4" />,
+    debugOnly: true, // This link is only for debugging purposes
+  },
 ];
 
 export const HeaderMenuLinks = () => {
@@ -49,8 +52,12 @@ export const HeaderMenuLinks = () => {
 
   return (
     <>
-      {menuLinks.map(({ label, href, icon, target }) => {
+      {menuLinks.map(({ label, href, icon, target, debugOnly }) => {
         const isActive = pathname === href;
+        // If the link is debug-only, skip it if not in debug mode
+        if (debugOnly && process.env.NODE_ENV !== "development") {
+          return null;
+        }
         return (
           <li key={href}>
             <Link
@@ -147,7 +154,7 @@ export const Header = () => {
             <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.svg" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold leading-tight">BCOS Chain DAO</span>
+            <span className="font-bold leading-tight">POTOS DAO</span>
             <span className="text-xs"></span>
           </div>
         </Link>
@@ -178,6 +185,7 @@ export const Header = () => {
               <ArrowPathIcon className="h-4 w-4" />
             </button>
           </div>
+          <SwitchTheme className={`pointer-events-auto`} />
           <RainbowKitCustomConnectButton />
         </div>
       </div>

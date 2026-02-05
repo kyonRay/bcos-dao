@@ -5,9 +5,9 @@
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
-  30303: {
+  60600: {
     BCOSGovernor: {
-      address: "0x468423fd4878C6afdB1f19A63c0c2138D1265BAE",
+      address: "0x1907D0996f9418199f4E85eFBe06494f191Dc6d7",
       abi: [
         {
           anonymous: false,
@@ -2929,7 +2929,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     CustomTimelockControllerUpgradeable: {
-      address: "0xc0FB74D18B965cB9593b1F3FEA4F83606533DeDC",
+      address: "0xb0B0ADBc3781f2C2889B83eE1c36761C40703bb2",
       abi: [
         {
           anonymous: false,
@@ -4039,7 +4039,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     ERC20VotePower: {
-      address: "0x1c2C506e733B34E765A753b861013A90Ad807250",
+      address: "0xd29D988324225696941D96903E0163402CC6f051",
       abi: [
         {
           anonymous: false,
@@ -5062,19 +5062,6 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_unit",
-              type: "uint256",
-            },
-          ],
-          name: "resetUint",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
           inputs: [],
           name: "symbol",
           outputs: [
@@ -5082,6 +5069,19 @@ const deployedContracts = {
               internalType: "string",
               name: "",
               type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "timer",
+          outputs: [
+            {
+              internalType: "contract TimeSetting",
+              name: "t",
+              type: "address",
             },
           ],
           stateMutability: "view",
@@ -5193,7 +5193,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     TimeSetting: {
-      address: "0xe1c721177aA23FC51E5163468470038f4657DEf7",
+      address: "0xeA783f9Da95F098c5459C837c84f89Cb6BAB164C",
       abi: [
         {
           inputs: [],

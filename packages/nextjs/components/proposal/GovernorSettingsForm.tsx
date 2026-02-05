@@ -14,39 +14,61 @@ const governorSettings = [
     title: "DAO Settings",
     options: [
       {
-        label: <div>Proposal Threshold</div>,
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Create Proposal Threshold</div>
+            <div className="text-xs text-base-content/70">
+              The minimum amount of EVP token required to create a proposal.
+            </div>
+          </div>
+        ),
         value: "setProposalThreshold",
       },
       {
-        label: <div>Vote Success Threshold</div>,
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Vote Success Threshold</div>
+            <div className="text-xs text-base-content/70">The percentage of votes required for a proposal to pass.</div>
+          </div>
+        ),
         value: "setVoteSuccessThreshold",
       },
       {
-        label: <div>Proposal Approval Threshold</div>,
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Proposal Approval Threshold</div>
+            <div className="text-xs text-base-content/70">
+              The percentage of approvals needed for a proposal to be accepted.
+            </div>
+          </div>
+        ),
         value: "setApproveThreshold",
       },
       {
-        label: <div>Quorum Numerator</div>,
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Participation Quorum Numerator</div>
+            <div className="text-xs text-base-content/70">The minimum participation rate required for voting.</div>
+          </div>
+        ),
         value: "updateQuorumNumerator",
       },
       {
-        label: <div>Voting Delay</div>,
-        value: "setVotingDelay",
-      },
-      {
-        label: <div>Voting Period</div>,
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Voting Period</div>
+            <div className="text-xs text-base-content/70">The duration of the voting period.</div>
+          </div>
+        ),
         value: "setVotingPeriod",
       },
       {
-        label: <div>Timelock</div>,
-        value: "updateTimelock",
-      },
-      {
-        label: <div>Voting Success Logic</div>,
-        value: "updateVoteSuccessLogic",
-      },
-      {
-        label: <div>Upgrade DAO Contract</div>,
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Upgrade DAO Contract</div>
+            <div className="text-xs text-base-content/70">Upgrade the smart contract implementation.</div>
+          </div>
+        ),
         value: "upgradeToAndCall",
       },
     ],
@@ -56,11 +78,21 @@ const governorSettings = [
     title: "DAO Role Changing",
     options: [
       {
-        label: <div>Grant Maintainer</div>,
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Grant Maintainer</div>
+            <div className="text-xs text-base-content/70">Grant maintainer role to an address to manage the DAO.</div>
+          </div>
+        ),
         value: "grantMaintainer",
       },
       {
-        label: <div>Revoke Maintainer</div>,
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Revoke Maintainer</div>
+            <div className="text-xs text-base-content/70">Revoke maintainer role from an address.</div>
+          </div>
+        ),
         value: "revokeMaintainer",
       },
     ],
@@ -70,20 +102,55 @@ const governorSettings = [
     title: "EVP Token Changing",
     options: [
       {
-        label: <div>Mint EVP Token</div>,
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Mint EVP Token</div>
+            <div className="text-xs text-base-content/70">Mint new EVP tokens to a specified address.</div>
+          </div>
+        ),
         value: "mintToken",
       },
       {
-        label: <div>Burn EVP Token</div>,
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Burn EVP Token</div>
+            <div className="text-xs text-base-content/70">Burn EVP tokens from a specified address.</div>
+          </div>
+        ),
         value: "burnToken",
       },
       {
-        label: <div>Pause EVP Token</div>,
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Pause EVP Token</div>
+            <div className="text-xs text-base-content/70">Pause all token transfers and operations.</div>
+          </div>
+        ),
         value: "pauseToken",
       },
       {
-        label: <div>Unpause EVP Token</div>,
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Unpause EVP Token</div>
+            <div className="text-xs text-base-content/70">Resume all token transfers and operations.</div>
+          </div>
+        ),
         value: "unpauseToken",
+      },
+    ],
+  },
+  {
+    label: <div className="text-base-content">Timer Unit Changing</div>,
+    title: "Timer Unit Changing",
+    options: [
+      {
+        label: (
+          <div className="flex justify-between items-center">
+            <div>Reset Timer Unit</div>
+            <div className="text-xs text-base-content/70">Reset the timer unit to a new value.</div>
+          </div>
+        ),
+        value: "resetUint",
       },
     ],
   },

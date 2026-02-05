@@ -127,8 +127,8 @@ const ProposalCreation: NextPage = () => {
         };
         switch (task.name) {
           case "Governor Settings": {
-            action.abi = [...deployedContracts["30303"].BCOSGovernor.abi];
-            action.address = deployedContracts["30303"].BCOSGovernor.address;
+            // action.abi = [...deployedContracts["30303"].BCOSGovernor.abi];
+            // action.address = deployedContracts["30303"].BCOSGovernor.address;
             break;
           }
           case "Chain System Change":

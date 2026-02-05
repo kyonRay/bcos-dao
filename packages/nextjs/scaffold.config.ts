@@ -13,17 +13,17 @@ export type ScaffoldConfig = {
 
 export const DEFAULT_ALCHEMY_API_KEY = "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
 
-const chain_rpc = process.env.NEXT_PUBLIC_CHAIN_RPC_URL || "http://140.210.218.31:8565";
-const chain_explorer = process.env.NEXT_PUBLIC_BLOCK_EXPLORERS_URL || "http://140.210.218.31";
+const chain_rpc = process.env.NEXT_PUBLIC_CHAIN_RPC_URL || "https://rpc-testnet.potos.hk";
+const chain_explorer = process.env.NEXT_PUBLIC_BLOCK_EXPLORERS_URL || "https://scan-testnet.potos.hk";
 const scaffoldConfig = {
   // The networks on which your DApp is live
   targetNetworks: [
     {
-      id: 30303,
-      name: "BCOS Testnet",
+      id: 60600,
+      name: "POTOS Testnet",
       nativeCurrency: {
         decimals: 18,
-        name: "BCOS Token",
+        name: "POTOS Token",
         symbol: "POT",
       },
       rpcUrls: {
