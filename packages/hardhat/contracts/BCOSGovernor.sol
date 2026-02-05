@@ -436,8 +436,6 @@ UUPSUpgradeable
      ****************************/
 
     function resetUint(uint256 _unit) public onlyGovernance {
-        uint256 finalStateProposal = getExecutedProposals().length + getCancelledProposals().length;
-        require(finalStateProposal + 1 == proposalCount(), "BCOSGovernor: not all proposals are finalized");
         ERC20VotePower token = ERC20VotePower(address(token()));
         TimeSetting t = token.timer();
         t.resetUnit(_unit);
