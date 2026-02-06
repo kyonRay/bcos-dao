@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { LinkOutlined } from "@ant-design/icons";
@@ -43,6 +43,9 @@ export const ProposalOverview = ({ proposal, isPreview = false }: ProposalOvervi
   const [timeSuffix, setTimeSuffix] = useState<string>("");
   const [txSubmitProposalHash, setTxSubmitProposalHash] = useState<string>();
   const [txExecutedProposalHash, setTxExecutedProposalHash] = useState<string>();
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const descriptionRef = useRef<HTMLDivElement>(null);
+  const [showDescriptionToggle, setShowDescriptionToggle] = useState(false);
   const txsByProposer = useTransactionsByAddress(proposal.createBlock, proposal.proposer);
   const executedTx = useTransactionsFilterByTo(proposal.executedBlock, bcosGovernor.data?.address);
   const { resolvedTheme } = useTheme();
@@ -114,6 +117,19 @@ export const ProposalOverview = ({ proposal, isPreview = false }: ProposalOvervi
       }
     }
   }, [executedTx]);
+
+  const descriptionCollapsedHeight = 200;
+  useEffect(() => {
+    if (!descriptionRef.current || descriptionExpanded) return;
+    const el = descriptionRef.current;
+    const check = () => {
+      setShowDescriptionToggle(el.scrollHeight > descriptionCollapsedHeight);
+    };
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [proposal.description, descriptionExpanded]);
 
   const { targetNetwork } = useTargetNetwork();
   const blockExplorerBaseURL = targetNetwork.blockExplorers?.default?.url;
@@ -351,7 +367,13 @@ export const ProposalOverview = ({ proposal, isPreview = false }: ProposalOvervi
         {/* Description */}
         <div>
           <h2 className="text-xl font-bold text-base-content mb-4">Description</h2>
-          <div className="prose max-w-none bg-base-100 p-4 rounded-lg text-base-content">
+          <div
+            ref={descriptionRef}
+            className="relative prose max-w-none bg-base-100 p-4 rounded-lg text-base-content overflow-hidden transition-[max-height] duration-300"
+            style={{
+              maxHeight: descriptionExpanded ? undefined : descriptionCollapsedHeight,
+            }}
+          >
             {typeof window !== "undefined" && (
               <MDXEditor
                 markdown={proposal.description}
@@ -360,7 +382,31 @@ export const ProposalOverview = ({ proposal, isPreview = false }: ProposalOvervi
                 plugins={[linkPlugin(), listsPlugin(), quotePlugin(), headingsPlugin(), codeBlockPlugin()]}
               />
             )}
+            {/* Frosted overlay when collapsed to suggest more content */}
+            {showDescriptionToggle && !descriptionExpanded && (
+              <div
+                className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none rounded-b-lg bg-gradient-to-t from-base-100 via-base-100/85 to-transparent backdrop-blur-[3px]"
+                aria-hidden
+              />
+            )}
           </div>
+          {showDescriptionToggle && (
+            <div className="flex justify-center mt-2">
+              <button
+                type="button"
+                onClick={() => setDescriptionExpanded(e => !e)}
+                className="text-sm font-medium text-primary inline-flex items-center gap-1"
+              >
+                <div className="underline">{descriptionExpanded ? "less" : "more"}</div>
+                <span
+                  className={classNames("inline-block transition-transform", descriptionExpanded && "rotate-180")}
+                  aria-hidden
+                >
+                  ▼
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

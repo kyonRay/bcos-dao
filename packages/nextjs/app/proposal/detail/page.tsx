@@ -522,7 +522,7 @@ const ProposalDetail: NextPage = () => {
 
   const shouldShowVotingDetails = () => {
     const state = Number(proposal.state);
-    return ![ProposalState.Pending, ProposalState.Canceled, ProposalState.Defeated].includes(state);
+    return ![ProposalState.Pending, ProposalState.Canceled].includes(state);
   };
 
   return (
@@ -683,7 +683,7 @@ const ProposalDetail: NextPage = () => {
             </div>
           )}
         </div>
-        <div className="w-1/3">
+        <div className="w-1/3 self-start sticky top-8">
           {renderVotingButtons()}
 
           {renderActionButtons()}
