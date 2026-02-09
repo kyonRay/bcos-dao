@@ -168,75 +168,81 @@ export const ProposalOverview = ({ proposal, isPreview = false }: ProposalOvervi
         ))}
       {/*Body*/}
       <div className="p-6">
-        {/* General Info */}
+        {/* Title: always show; in preview show as "Proposal title" + title */}
         <div className="mb-8">
-          <Popover content={proposal.title} trigger="hover" placement="topLeft" overlayStyle={{ maxWidth: "50%" }}>
-            <h1
-              className={`text-2xl font-bold text-base-content truncate cursor-pointer ${
-                isPreview ? "w-full" : "w-[calc(100%-100px)]"
-              }`}
-            >
-              {proposal.title}
-            </h1>
-          </Popover>
+          {isPreview ? (
+            <>
+              <h2 className="text-xl font-bold text-base-content mb-2">Proposal title</h2>
+              <h1 className="text-2xl font-bold text-base-content break-words">{proposal.title || "(No title)"}</h1>
+            </>
+          ) : (
+            <Popover content={proposal.title} trigger="hover" placement="topLeft" overlayStyle={{ maxWidth: "50%" }}>
+              <h1 className={`text-2xl font-bold text-base-content truncate cursor-pointer w-[calc(100%-100px)]`}>
+                {proposal.title}
+              </h1>
+            </Popover>
+          )}
 
-          <div className="grid grid-cols-2 gap-6 mt-6">
-            {etaTime !== undefined ? (
-              <div>
-                <h2 className="text-xl font-bold text-base-content">Executable Time</h2>
-                <div className="flex justify-start">
-                  <Space>
-                    <p className="text-md font-medium text-base-content">{etaTime}</p>
-                    <p className="text-md text-emerald-500">{timeSuffix}</p>
-                  </Space>
+          {/* Voting Period, Proposer, tx links: only for submitted proposals, not preview */}
+          {!isPreview && (
+            <div className="grid grid-cols-2 gap-6 mt-6">
+              {etaTime !== undefined ? (
+                <div>
+                  <h2 className="text-xl font-bold text-base-content">Executable Time</h2>
+                  <div className="flex justify-start">
+                    <Space>
+                      <p className="text-md font-medium text-base-content">{etaTime}</p>
+                      <p className="text-md text-emerald-500">{timeSuffix}</p>
+                    </Space>
+                  </div>
                 </div>
-              </div>
-            ) : (
+              ) : (
+                <div>
+                  <h2 className="text-xl font-bold text-base-content">Voting Period</h2>
+                  <p className="text-md font-medium text-base-content">{timeRange}</p>
+                </div>
+              )}
               <div>
-                <h2 className="text-xl font-bold text-base-content">Voting Period</h2>
-                <p className="text-md font-medium text-base-content">{timeRange}</p>
+                <h2 className="text-xl font-bold text-base-content">Proposer</h2>
+                <Link
+                  href={`${blockExplorerBaseURL}/address/${proposal.proposer}`}
+                  className="text-md font-medium text-primary"
+                  target="_blank"
+                >
+                  <LinkOutlined />
+                  {shortenAddress(proposal.proposer)}
+                </Link>
               </div>
-            )}
-            <div>
-              <h2 className="text-xl font-bold text-base-content">Proposer</h2>
-              <Link
-                href={`${blockExplorerBaseURL}/address/${proposal.proposer}`}
-                className="text-md font-medium text-primary"
-                target="_blank"
-              >
-                <LinkOutlined />
-                {shortenAddress(proposal.proposer)}
-              </Link>
+
+              {txSubmitProposalHash && (
+                <div>
+                  <h2 className="text-xl font-bold text-base-content">Submit Proposal Transaction</h2>
+                  <Link
+                    href={`${blockExplorerBaseURL}/tx/${txSubmitProposalHash}`}
+                    className="text-md font-medium text-primary"
+                    target={`_blank`}
+                  >
+                    <LinkOutlined />
+                    View on Explorer →
+                  </Link>
+                </div>
+              )}
+
+              {txExecutedProposalHash && (
+                <div>
+                  <h2 className="text-xl font-bold text-base-content">Executed Transaction</h2>
+                  <Link
+                    href={`${blockExplorerBaseURL}/tx/${txExecutedProposalHash}`}
+                    className="text-md font-medium text-primary"
+                    target={`_blank`}
+                  >
+                    <LinkOutlined />
+                    View on Explorer →
+                  </Link>
+                </div>
+              )}
             </div>
-
-            {txSubmitProposalHash && (
-              <div>
-                <h2 className="text-xl font-bold text-base-content">Submit Proposal Transaction</h2>
-                <Link
-                  href={`${blockExplorerBaseURL}/tx/${txSubmitProposalHash}`}
-                  className="text-md font-medium text-primary"
-                  target={`_blank`}
-                >
-                  <LinkOutlined />
-                  View on Explorer →
-                </Link>
-              </div>
-            )}
-
-            {txExecutedProposalHash && (
-              <div>
-                <h2 className="text-xl font-bold text-base-content">Executed Transaction</h2>
-                <Link
-                  href={`${blockExplorerBaseURL}/tx/${txExecutedProposalHash}`}
-                  className="text-md font-medium text-primary"
-                  target={`_blank`}
-                >
-                  <LinkOutlined />
-                  View on Explorer →
-                </Link>
-              </div>
-            )}
-          </div>
+          )}
         </div>
 
         {/* Actions */}
@@ -376,7 +382,9 @@ export const ProposalOverview = ({ proposal, isPreview = false }: ProposalOvervi
           >
             {typeof window !== "undefined" && (
               <MDXEditor
-                markdown={proposal.description}
+                markdown={
+                  typeof proposal.description === "string" ? proposal.description : String(proposal.description ?? "")
+                }
                 readOnly
                 contentEditableClassName="!bg-transparent !text-base-content"
                 plugins={[linkPlugin(), listsPlugin(), quotePlugin(), headingsPlugin(), codeBlockPlugin()]}
