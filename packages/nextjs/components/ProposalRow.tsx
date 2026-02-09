@@ -73,27 +73,77 @@ function getStatusBackgroundClasses(state: string | ProposalState, isDarkMode: b
   return "bg-gray-200";
 }
 
+// Get status badge background color classes (for the status badge)
+function getStatusBadgeBackgroundClasses(state: string | ProposalState, isDarkMode: boolean): string {
+  const statusNum = typeof state === "string" ? undefined : Number(state);
+  const colorKey = typeof state === "string" ? ProposalState[state as keyof typeof ProposalState] : statusNum;
+
+  if (colorKey === undefined) {
+    return isDarkMode ? "bg-gray-400" : "bg-white";
+  }
+
+  const colorClassName = stateColorsClassName[colorKey];
+
+  if (isDarkMode) {
+    // In dark mode, use the color-400 variant like ProposalCard
+    if (colorClassName === "violet") {
+      return "bg-violet-400";
+    }
+    if (colorClassName === "rose") {
+      return "bg-rose-400";
+    }
+    if (colorClassName === "gray") {
+      return "bg-gray-400";
+    }
+    if (colorClassName === "sky") {
+      return "bg-sky-400";
+    }
+    if (colorClassName === "emerald") {
+      return "bg-emerald-400";
+    }
+    if (colorClassName === "teal") {
+      return "bg-teal-400";
+    }
+    if (colorClassName === "indigo") {
+      return "bg-indigo-400";
+    }
+    if (colorClassName === "amber") {
+      return "bg-amber-400";
+    }
+    return "bg-gray-400";
+  }
+
+  // In light mode, use white background
+  return "bg-white";
+}
+
 // Get status text color classes (for the status badge text)
 function getStatusTextColorClasses(state: string | ProposalState, isDarkMode: boolean): string {
   const statusNum = typeof state === "string" ? undefined : Number(state);
   const colorKey = typeof state === "string" ? ProposalState[state as keyof typeof ProposalState] : statusNum;
 
   if (colorKey === undefined) {
-    return isDarkMode ? "text-gray-400" : "text-gray-600";
+    return isDarkMode ? "text-white" : "text-gray-600";
   }
 
   const colorClassName = stateColorsClassName[colorKey];
 
+  // In dark mode, badge text should be white (since background is color-400)
+  if (isDarkMode) {
+    return "text-white";
+  }
+
+  // In light mode, use the color-600 variant
   if (colorClassName === "violet") {
-    return isDarkMode ? "text-violet-400" : "text-violet-600";
+    return "text-violet-600";
   }
   if (colorClassName === "rose") {
-    return isDarkMode ? "text-rose-400" : "text-rose-600";
+    return "text-rose-600";
   }
   if (colorClassName === "gray") {
-    return isDarkMode ? "text-gray-400" : "text-gray-600";
+    return "text-gray-600";
   }
-  return isDarkMode ? "text-gray-400" : "text-gray-600";
+  return "text-gray-600";
 }
 
 export const ProposalRow = ({
@@ -116,6 +166,7 @@ export const ProposalRow = ({
   const category = extractCategory(title, "");
   const statusText = getStatusText(state);
   const statusBackgroundClasses = getStatusBackgroundClasses(state, isDarkMode);
+  const statusBadgeBackgroundClasses = getStatusBadgeBackgroundClasses(state, isDarkMode);
   const statusTextColorClasses = getStatusTextColorClasses(state, isDarkMode);
 
   // Format status display text
@@ -181,7 +232,7 @@ export const ProposalRow = ({
         >
           <span className="text-base sm:text-lg font-bold text-white mr-2 sm:mr-0 mb-0 sm:mb-1.5">No. {id}</span>
           <span
-            className={`px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-semibold rounded-full bg-white ${statusTextColorClasses}`}
+            className={`px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-semibold rounded-full ${statusBadgeBackgroundClasses} ${statusTextColorClasses}`}
           >
             {displayStatus}
           </span>

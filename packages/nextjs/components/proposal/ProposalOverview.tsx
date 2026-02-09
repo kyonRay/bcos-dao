@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { LinkOutlined } from "@ant-design/icons";
@@ -43,6 +43,9 @@ export const ProposalOverview = ({ proposal, isPreview = false }: ProposalOvervi
   const [timeSuffix, setTimeSuffix] = useState<string>("");
   const [txSubmitProposalHash, setTxSubmitProposalHash] = useState<string>();
   const [txExecutedProposalHash, setTxExecutedProposalHash] = useState<string>();
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const descriptionRef = useRef<HTMLDivElement>(null);
+  const [showDescriptionToggle, setShowDescriptionToggle] = useState(false);
   const txsByProposer = useTransactionsByAddress(proposal.createBlock, proposal.proposer);
   const executedTx = useTransactionsFilterByTo(proposal.executedBlock, bcosGovernor.data?.address);
   const { resolvedTheme } = useTheme();
@@ -115,6 +118,19 @@ export const ProposalOverview = ({ proposal, isPreview = false }: ProposalOvervi
     }
   }, [executedTx]);
 
+  const descriptionCollapsedHeight = 200;
+  useEffect(() => {
+    if (!descriptionRef.current || descriptionExpanded) return;
+    const el = descriptionRef.current;
+    const check = () => {
+      setShowDescriptionToggle(el.scrollHeight > descriptionCollapsedHeight);
+    };
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [proposal.description, descriptionExpanded]);
+
   const { targetNetwork } = useTargetNetwork();
   const blockExplorerBaseURL = targetNetwork.blockExplorers?.default?.url;
   const isDarkMode = resolvedTheme === "dark";
@@ -152,75 +168,81 @@ export const ProposalOverview = ({ proposal, isPreview = false }: ProposalOvervi
         ))}
       {/*Body*/}
       <div className="p-6">
-        {/* General Info */}
+        {/* Title: always show; in preview show as "Proposal title" + title */}
         <div className="mb-8">
-          <Popover content={proposal.title} trigger="hover" placement="topLeft" overlayStyle={{ maxWidth: "50%" }}>
-            <h1
-              className={`text-2xl font-bold text-base-content truncate cursor-pointer ${
-                isPreview ? "w-full" : "w-[calc(100%-100px)]"
-              }`}
-            >
-              {proposal.title}
-            </h1>
-          </Popover>
+          {isPreview ? (
+            <>
+              <h2 className="text-xl font-bold text-base-content mb-2">Proposal title</h2>
+              <h1 className="text-2xl font-bold text-base-content break-words">{proposal.title || "(No title)"}</h1>
+            </>
+          ) : (
+            <Popover content={proposal.title} trigger="hover" placement="topLeft" overlayStyle={{ maxWidth: "50%" }}>
+              <h1 className={`text-2xl font-bold text-base-content truncate cursor-pointer w-[calc(100%-100px)]`}>
+                {proposal.title}
+              </h1>
+            </Popover>
+          )}
 
-          <div className="grid grid-cols-2 gap-6 mt-6">
-            {etaTime !== undefined ? (
-              <div>
-                <h2 className="text-xl font-bold text-base-content">Executable Time</h2>
-                <div className="flex justify-start">
-                  <Space>
-                    <p className="text-md font-medium text-base-content">{etaTime}</p>
-                    <p className="text-md text-emerald-500">{timeSuffix}</p>
-                  </Space>
+          {/* Voting Period, Proposer, tx links: only for submitted proposals, not preview */}
+          {!isPreview && (
+            <div className="grid grid-cols-2 gap-6 mt-6">
+              {etaTime !== undefined ? (
+                <div>
+                  <h2 className="text-xl font-bold text-base-content">Executable Time</h2>
+                  <div className="flex justify-start">
+                    <Space>
+                      <p className="text-md font-medium text-base-content">{etaTime}</p>
+                      <p className="text-md text-emerald-500">{timeSuffix}</p>
+                    </Space>
+                  </div>
                 </div>
-              </div>
-            ) : (
+              ) : (
+                <div>
+                  <h2 className="text-xl font-bold text-base-content">Voting Period</h2>
+                  <p className="text-md font-medium text-base-content">{timeRange}</p>
+                </div>
+              )}
               <div>
-                <h2 className="text-xl font-bold text-base-content">Voting Period</h2>
-                <p className="text-md font-medium text-base-content">{timeRange}</p>
+                <h2 className="text-xl font-bold text-base-content">Proposer</h2>
+                <Link
+                  href={`${blockExplorerBaseURL}/address/${proposal.proposer}`}
+                  className="text-md font-medium text-primary"
+                  target="_blank"
+                >
+                  <LinkOutlined />
+                  {shortenAddress(proposal.proposer)}
+                </Link>
               </div>
-            )}
-            <div>
-              <h2 className="text-xl font-bold text-base-content">Proposer</h2>
-              <Link
-                href={`${blockExplorerBaseURL}/address/${proposal.proposer}`}
-                className="text-md font-medium text-primary"
-                target="_blank"
-              >
-                <LinkOutlined />
-                {shortenAddress(proposal.proposer)}
-              </Link>
+
+              {txSubmitProposalHash && (
+                <div>
+                  <h2 className="text-xl font-bold text-base-content">Submit Proposal Transaction</h2>
+                  <Link
+                    href={`${blockExplorerBaseURL}/tx/${txSubmitProposalHash}`}
+                    className="text-md font-medium text-primary"
+                    target={`_blank`}
+                  >
+                    <LinkOutlined />
+                    View on Explorer →
+                  </Link>
+                </div>
+              )}
+
+              {txExecutedProposalHash && (
+                <div>
+                  <h2 className="text-xl font-bold text-base-content">Executed Transaction</h2>
+                  <Link
+                    href={`${blockExplorerBaseURL}/tx/${txExecutedProposalHash}`}
+                    className="text-md font-medium text-primary"
+                    target={`_blank`}
+                  >
+                    <LinkOutlined />
+                    View on Explorer →
+                  </Link>
+                </div>
+              )}
             </div>
-
-            {txSubmitProposalHash && (
-              <div>
-                <h2 className="text-xl font-bold text-base-content">Submit Proposal Transaction</h2>
-                <Link
-                  href={`${blockExplorerBaseURL}/tx/${txSubmitProposalHash}`}
-                  className="text-md font-medium text-primary"
-                  target={`_blank`}
-                >
-                  <LinkOutlined />
-                  View on Explorer →
-                </Link>
-              </div>
-            )}
-
-            {txExecutedProposalHash && (
-              <div>
-                <h2 className="text-xl font-bold text-base-content">Executed Transaction</h2>
-                <Link
-                  href={`${blockExplorerBaseURL}/tx/${txExecutedProposalHash}`}
-                  className="text-md font-medium text-primary"
-                  target={`_blank`}
-                >
-                  <LinkOutlined />
-                  View on Explorer →
-                </Link>
-              </div>
-            )}
-          </div>
+          )}
         </div>
 
         {/* Actions */}
@@ -351,16 +373,48 @@ export const ProposalOverview = ({ proposal, isPreview = false }: ProposalOvervi
         {/* Description */}
         <div>
           <h2 className="text-xl font-bold text-base-content mb-4">Description</h2>
-          <div className="prose max-w-none bg-base-100 p-4 rounded-lg text-base-content">
+          <div
+            ref={descriptionRef}
+            className="relative prose max-w-none bg-base-100 p-4 rounded-lg text-base-content overflow-hidden transition-[max-height] duration-300"
+            style={{
+              maxHeight: descriptionExpanded ? undefined : descriptionCollapsedHeight,
+            }}
+          >
             {typeof window !== "undefined" && (
               <MDXEditor
-                markdown={proposal.description}
+                markdown={
+                  typeof proposal.description === "string" ? proposal.description : String(proposal.description ?? "")
+                }
                 readOnly
                 contentEditableClassName="!bg-transparent !text-base-content"
                 plugins={[linkPlugin(), listsPlugin(), quotePlugin(), headingsPlugin(), codeBlockPlugin()]}
               />
             )}
+            {/* Frosted overlay when collapsed to suggest more content */}
+            {showDescriptionToggle && !descriptionExpanded && (
+              <div
+                className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none rounded-b-lg bg-gradient-to-t from-base-100 via-base-100/85 to-transparent backdrop-blur-[3px]"
+                aria-hidden
+              />
+            )}
           </div>
+          {showDescriptionToggle && (
+            <div className="flex justify-center mt-2">
+              <button
+                type="button"
+                onClick={() => setDescriptionExpanded(e => !e)}
+                className="text-sm font-medium text-primary inline-flex items-center gap-1"
+              >
+                <div className="underline">{descriptionExpanded ? "less" : "more"}</div>
+                <span
+                  className={classNames("inline-block transition-transform", descriptionExpanded && "rotate-180")}
+                  aria-hidden
+                >
+                  ▼
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
